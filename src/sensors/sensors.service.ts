@@ -13,25 +13,58 @@ export class SensorsService {
         private readonly sensorsDataRepository: Repository<SensorsDataEntity>,
     ) { }
 
-    async getAll(query:QueryParamsDto): Promise<SensorsDataEntity[]> {
-        const {page,limit,order}=query;
-        return await this.sensorsDataRepository.find({
-            order:{time:order},
-            take:limit,
-            skip:(page-1)*limit
-        });
-        
+    async getAll(query: QueryParamsDto): Promise<SensorsDataEntity[]> {
+        const { page, limit, order, startDate, endDate } = query;
+
+        const queryBuilder = this.sensorsDataRepository.createQueryBuilder('sensors');
+
+        if (startDate) {
+            queryBuilder.andWhere('sensors.time >= :startDate', { startDate });
+        }
+
+        if (endDate) {
+            queryBuilder.andWhere('sensors.time <= :endDate', { endDate });
+        }
+
+        // Apply ordering and pagination
+        queryBuilder
+            .orderBy('sensors.time', order)
+            .take(limit)
+            .skip((page - 1) * limit);
+
+        return await queryBuilder.getMany();
+
+        // return await this.sensorsDataRepository.find({
+        //     order: { time: order },
+        //     take: limit,
+        //     skip: (page - 1) * limit
+        // });
+
     }
 
-    async addData(data:AddSensorsDataDto): Promise<SensorsDataEntity> {
+    async getTotalCount(query: QueryParamsDto): Promise<number> {
+        const { startDate, endDate } = query;
+    
+        const countQueryBuilder = this.sensorsDataRepository.createQueryBuilder('sensors');
+    
+        if (startDate) {
+          countQueryBuilder.andWhere('sensors.time >= :startDate', { startDate });
+        }if (endDate) {
+          countQueryBuilder.andWhere('sensors.time <= :endDate', { endDate });
+        }
+    
+        return await countQueryBuilder.getCount();
+      }
+
+    async addData(data: AddSensorsDataDto): Promise<SensorsDataEntity> {
         const newData = this.sensorsDataRepository.create(data);
         return await this.sensorsDataRepository.save(newData);
     }
 
-    async getLastest():Promise<SensorsDataEntity>{
-        const [data]= await this.sensorsDataRepository.find({
-            order:{time:'DESC'},
-            take:1
+    async getLastest(): Promise<SensorsDataEntity> {
+        const [data] = await this.sensorsDataRepository.find({
+            order: { time: 'DESC' },
+            take: 1
         });
         return data;
     }
