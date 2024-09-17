@@ -4,7 +4,7 @@ import { Server,Socket } from 'socket.io';
 import { SensorsDataEntity } from 'src/entity/sensors.entity';
 import { OnModuleInit } from '@nestjs/common';
 
-@WebSocketGateway(3000,{cors:{origin:"*"}})
+@WebSocketGateway()
 export class SensorsGateway implements OnModuleInit,OnGatewayConnection,OnGatewayDisconnect {
   @WebSocketServer() server: Server;
 
