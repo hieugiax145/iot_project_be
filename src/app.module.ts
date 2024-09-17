@@ -12,11 +12,11 @@ import { MqttModule } from './mqtt/mqtt.module';
 @Module({
   imports: [TypeOrmModule.forRoot({
     type: 'mysql',
-    host: 'localhost',
+    host: 'hieugia.crq46mkoo53k.ap-southeast-1.rds.amazonaws.com',
     port: 3306,
-    username: 'root',
-    password: '1234',
-    database: 'user_db',
+    username: 'admin',
+    password: '12345678',
+    database: 'iot',
     // entities: [SensorsDataEntity],
     autoLoadEntities: true,
     synchronize: true
