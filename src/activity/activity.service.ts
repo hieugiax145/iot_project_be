@@ -22,6 +22,20 @@ export class ActivityService {
         });
     }
 
+    async getTotalCount(query: QueryParamsDto): Promise<number> {
+        const { startDate, endDate } = query;
+    
+        const countQueryBuilder = this.activityEntityRepository.createQueryBuilder('action');
+    
+        if (startDate) {
+          countQueryBuilder.andWhere('sensors.time >= :startDate', { startDate });
+        }if (endDate) {
+          countQueryBuilder.andWhere('sensors.time <= :endDate', { endDate });
+        }
+    
+        return await countQueryBuilder.getCount();
+      }
+
     async addData(data: ActivityDto) {
         const newData = this.activityEntityRepository.create(data);
         return await this.activityEntityRepository.save(newData);

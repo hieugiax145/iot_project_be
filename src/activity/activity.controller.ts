@@ -20,18 +20,19 @@ export class ActivityController {
     @ApiQuery({ name: 'order', enum: ['ASC', 'DESC'], description: 'Order direction for sorting', required: false })
     async getData(@Query() query: QueryParamsDto) {
         const data = await this.activityService.getData(query);
+        const totalCount=await this.activityService.getTotalCount(query);
         return {
             statusCode: HttpStatus.OK,
             message: 'Success',
             data: data,
             currentPage: query.page,
-            totalCount: data.length,
+            totalCount: totalCount,
         };
     }
 
     @Post()
     async addData(@Body() body: ActivityDto): Promise<{ statusCode: number; message: string; data: ActivityDto }> {
-        this.mqttService.publish('device_action', body.action === 1 ? 'ON' : 'OFF');
+        this.mqttService.publish('device_action', body.action === 1 ? '1' : '0');
         const newData = await this.activityService.addData(body);
         return {
             statusCode: 201,
