@@ -12,10 +12,9 @@ async function bootstrap() {
     .setTitle('IOT project')
     .setDescription('The API description')
     .setVersion('1.0')
-    .addTag('sensors').addTag('devices action history')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger', app, document, {
+  SwaggerModule.setup('docs', app, document, {
     jsonDocumentUrl: 'swagger/json',
   });
 

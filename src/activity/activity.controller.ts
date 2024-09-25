@@ -6,7 +6,7 @@ import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { query } from 'express';
 import { QueryParamsDto } from 'src/dto/query-params.dto';
 
-@ApiTags('devices action history')
+@ApiTags('devices activity')
 @Controller('activity')
 export class ActivityController {
     constructor(
@@ -18,6 +18,8 @@ export class ActivityController {
     @ApiQuery({ name: 'page', type: Number, description: 'Page number for pagination', required: false })
     @ApiQuery({ name: 'limit', type: Number, description: 'Number of items per page', required: false })
     @ApiQuery({ name: 'order', enum: ['ASC', 'DESC'], description: 'Order direction for sorting', required: false })
+    @ApiQuery({ name: 'startDate', type: String, description: 'Start date for filtering (YYYY-MM-DD)', required: false })
+    @ApiQuery({ name: 'endDate', type: String, description: 'End date for filtering (YYYY-MM-DD)', required: false })
     async getData(@Query() query: QueryParamsDto) {
         const data = await this.activityService.getData(query);
         const totalCount=await this.activityService.getTotalCount(query);

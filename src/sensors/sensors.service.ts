@@ -13,20 +13,19 @@ export class SensorsService {
         private readonly sensorsDataRepository: Repository<SensorsDataEntity>,
     ) { }
 
-    async getAll(query: QueryParamsDto): Promise<SensorsDataEntity[]> {
+    async getData(query: QueryParamsDto): Promise<SensorsDataEntity[]> {
         const { page, limit, order, startDate, endDate } = query;
 
         const queryBuilder = this.sensorsDataRepository.createQueryBuilder('sensors');
 
         if (startDate) {
-            queryBuilder.andWhere('sensors.time >= :startDate', { startDate });
+            queryBuilder.andWhere('sensors.time >= :startDate', { startDate:new Date(startDate) });
         }
 
         if (endDate) {
-            queryBuilder.andWhere('sensors.time <= :endDate', { endDate });
+            queryBuilder.andWhere('sensors.time <= :endDate', { endDate: new Date(endDate) });
         }
 
-        // Apply ordering and pagination
         queryBuilder
             .orderBy('sensors.time', order)
             .take(limit)
@@ -48,9 +47,9 @@ export class SensorsService {
         const countQueryBuilder = this.sensorsDataRepository.createQueryBuilder('sensors');
     
         if (startDate) {
-          countQueryBuilder.andWhere('sensors.time >= :startDate', { startDate });
+          countQueryBuilder.andWhere('sensors.time >= :startDate', { startDate:new Date(startDate) });
         }if (endDate) {
-          countQueryBuilder.andWhere('sensors.time <= :endDate', { endDate });
+          countQueryBuilder.andWhere('sensors.time <= :endDate', { endDate: new Date(endDate) });
         }
     
         return await countQueryBuilder.getCount();
