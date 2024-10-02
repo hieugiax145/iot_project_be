@@ -16,44 +16,37 @@ export class SensorsService {
     async getData(query: QueryParamsDto): Promise<SensorsDataEntity[]> {
         const { page, limit, order, startDate, endDate } = query;
 
-        const queryBuilder = this.sensorsDataRepository.createQueryBuilder('sensors');
+        const queryBuilder = this.sensorsDataRepository.createQueryBuilder('sensorsdata');
 
         if (startDate) {
-            queryBuilder.andWhere('sensors.time >= :startDate', { startDate:new Date(startDate) });
+            queryBuilder.andWhere('sensorsdata.time >= :startDate', { startDate: new Date(startDate) });
         }
 
         if (endDate) {
-            queryBuilder.andWhere('sensors.time <= :endDate', { endDate: new Date(endDate) });
+            queryBuilder.andWhere('sensorsdata.time <= :endDate', { endDate: new Date(endDate) });
         }
 
         queryBuilder
-            .orderBy('sensors.time', order)
+            .orderBy('sensorsdata.time', order)
             .take(limit)
             .skip((page - 1) * limit);
 
         return await queryBuilder.getMany();
-
-        // return await this.sensorsDataRepository.find({
-        //     order: { time: order },
-        //     take: limit,
-        //     skip: (page - 1) * limit
-        // });
-
     }
 
     async getTotalCount(query: QueryParamsDto): Promise<number> {
         const { startDate, endDate } = query;
-    
-        const countQueryBuilder = this.sensorsDataRepository.createQueryBuilder('sensors');
-    
+
+        const countQueryBuilder = this.sensorsDataRepository.createQueryBuilder('sensorsdata');
+
         if (startDate) {
-          countQueryBuilder.andWhere('sensors.time >= :startDate', { startDate:new Date(startDate) });
-        }if (endDate) {
-          countQueryBuilder.andWhere('sensors.time <= :endDate', { endDate: new Date(endDate) });
+            countQueryBuilder.andWhere('sensorsdata.time >= :startDate', { startDate: new Date(startDate) });
+        } if (endDate) {
+            countQueryBuilder.andWhere('sensorsdata.time <= :endDate', { endDate: new Date(endDate) });
         }
-    
+
         return await countQueryBuilder.getCount();
-      }
+    }
 
     async addData(data: AddSensorsDataDto): Promise<SensorsDataEntity> {
         const newData = this.sensorsDataRepository.create(data);

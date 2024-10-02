@@ -16,8 +16,11 @@ export class MqttService implements OnModuleInit {
     }
 
     connect() {
-        const mqtt_broker_url = 'mqtt://localhost:1883';
-        this.mqtt = connect(mqtt_broker_url);
+        const mqtt_broker_url = 'mqtt://localhost:1882';
+        this.mqtt = connect(mqtt_broker_url, {
+            username: 'hieugia',
+            password: '123'
+        });
 
         this.mqtt.on('connect', () => {
             console.log('Connected to MQTT server');
@@ -32,8 +35,8 @@ export class MqttService implements OnModuleInit {
             console.log('New message received!');
             console.log(message.toString());
             try {
-                const data= await this.sensorsDataService.addData(JSON.parse(message.toString()));
-                this.socketService.server.emit('latestData',data)
+                const data = await this.sensorsDataService.addData(JSON.parse(message.toString()));
+                this.socketService.server.emit('latestData', data)
             } catch (error) {
                 console.error('Error processing MQTT message:', error);
             }

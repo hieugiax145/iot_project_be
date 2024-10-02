@@ -1,14 +1,12 @@
 import { MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { SensorsService } from './sensors.service';
-import { Server, Socket } from 'socket.io';
-import { SensorsDataEntity } from 'src/entity/sensors.entity';
+import { Server } from 'socket.io';
 import { OnModuleInit } from '@nestjs/common';
 
 @WebSocketGateway()
 export class SensorsGateway implements OnModuleInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
 
-  constructor(private readonly sensorsService: SensorsService) { }
+  constructor() { }
   onModuleInit() {
     this.server.on('connection', (socket) => {
 

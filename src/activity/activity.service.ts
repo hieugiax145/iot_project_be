@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { time } from 'console';
 import { ActivityDto } from 'src/dto/activity.dto';
 import { QueryParamsDto } from 'src/dto/query-params.dto';
 import { ActivityEntity } from 'src/entity/activity.entity';
@@ -27,12 +28,6 @@ export class ActivityService {
     queryBuilder.orderBy('activity.time', order).take(limit).skip((page - 1) * limit)
 
     return await queryBuilder.getMany();
-
-    // return await this.activityEntityRepository.find({
-    //   order: { time: order },
-    //   take: limit,
-    //   skip: (page - 1) * limit
-    // });
   }
 
   async getTotalCount(query: QueryParamsDto): Promise<number> {
@@ -52,6 +47,11 @@ export class ActivityService {
   async addData(data: ActivityDto) {
     const newData = this.activityEntityRepository.create(data);
     return await this.activityEntityRepository.save(newData);
+  }
+
+  async getLatest(device:string): Promise<ActivityEntity> {
+    const [data] = await this.activityEntityRepository.find({ where:{device},order: { time: "DESC" }, take: 1 });
+    return data;
   }
 
 }
