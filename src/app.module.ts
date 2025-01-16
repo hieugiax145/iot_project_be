@@ -1,27 +1,43 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { SensorsModule } from './sensors/sensors.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { SensorsDataEntity } from './entity/sensors.entity';
-import { MqttService } from './mqtt/mqtt.service';
-import { SensorsService } from './sensors/sensors.service';
 import { ActivityModule } from './activity/activity.module';
 import { MqttModule } from './mqtt/mqtt.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { TransformInterceptor } from './core/transform.interceptor';
+import { SensorsModule } from './modules/sensors/sensors.module';
+import { DevicesModule } from './modules/devices/devices.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot({
-    type: 'mysql',
-    host: 'hieugia.crq46mkoo53k.ap-southeast-1.rds.amazonaws.com',
-    port: 3306,
-    username: 'admin',
-    password: '12345678',
-    database: 'iot',
-    // entities: [SensorsDataEntity],
-    autoLoadEntities: true,
-    synchronize: true
-  }),SensorsModule, ActivityModule, MqttModule],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'mysql',
+        host: configService.get<string>('DB_HOST'),
+        port: configService.get<number>('DB_PORT'),
+        username: configService.get<string>('DB_USERNAME'),
+        password: configService.get<string>('DB_PASSWORD'),
+        database: configService.get<string>('DB_NAME'),
+        autoLoadEntities: true,
+        synchronize: true,
+      }),
+      inject: [ConfigService],
+    }),
+    SensorsModule,
+    DevicesModule,
+    MqttModule,
+  ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransformInterceptor,
+    },
+  ],
 })
-export class AppModule { }
+export class AppModule {}

@@ -3,7 +3,7 @@ import { Server } from 'socket.io';
 import { OnModuleInit } from '@nestjs/common';
 
 @WebSocketGateway()
-export class SensorsGateway implements OnModuleInit, OnGatewayConnection, OnGatewayDisconnect {
+export class Gateway implements OnModuleInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
 
   constructor() { }

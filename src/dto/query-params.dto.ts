@@ -2,6 +2,11 @@ import { Transform } from "class-transformer";
 import { IsDateString, IsNumber, IsOptional, IsString, Min } from "class-validator";
 
 export class QueryParamsDto {
+
+  @IsOptional()
+  @IsString()
+  keyword?: string
+
   @Transform(({ value }) => (value ? parseInt(value) : undefined))
   @IsOptional()
   @IsNumber()
