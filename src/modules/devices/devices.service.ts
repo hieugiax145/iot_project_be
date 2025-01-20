@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateDeviceDto } from './dto/create-device.dto';
-import { UpdateDeviceDto } from './dto/update-device.dto';
 import { Device } from './entities/device.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository } from 'typeorm';
@@ -36,11 +35,12 @@ export class DevicesService {
       // Log the decoded keyword for debugging
       console.log(`Decoded keyword: ${decodedKeyword}`);
 
+      const isDateValid = /^\d{4}-\d{2}-\d{2}$/.test(
+        decodedKeyword.substring(0, 10),
+      );
+
       const numericKeyword = parseInt(decodedKeyword);
       const isNumberValid = !isNaN(numericKeyword);
-
-      const dateKeyword = new Date(decodedKeyword);
-      const isDateValid = !isNaN(dateKeyword.getTime());
 
       queryBuilder.andWhere(
         new Brackets((qb) => {
@@ -97,11 +97,12 @@ export class DevicesService {
       // Log the decoded keyword for debugging
       console.log(`Decoded keyword: ${decodedKeyword}`);
 
+      const isDateValid = /^\d{4}-\d{2}-\d{2}$/.test(
+        decodedKeyword.substring(0, 10),
+      );
+
       const numericKeyword = parseInt(decodedKeyword);
       const isNumberValid = !isNaN(numericKeyword);
-
-      const dateKeyword = new Date(decodedKeyword);
-      const isDateValid = !isNaN(dateKeyword.getTime());
 
       countQueryBuilder.andWhere(
         new Brackets((qb) => {
