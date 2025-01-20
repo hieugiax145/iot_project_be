@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   BeforeInsert,
   Column,
@@ -8,21 +9,27 @@ import {
 
 @Entity('sensorsdata')
 export class Sensor {
+  @ApiProperty({ example: 122 })
   @PrimaryGeneratedColumn()
   id: number;
 
+  @ApiProperty({ example: 25 })
   @Column('float')
   temp: number;
 
+  @ApiProperty({ example: 25 })
   @Column('float')
   hum: number;
 
+  @ApiProperty({ example: 25 })
   @Column('float')
   light: number;
 
+  @ApiProperty({ example: 25 })
   @Column('float')
   dust: number;
 
+  @ApiProperty()
   @CreateDateColumn({ type: 'timestamp' })
   time: Date;
 

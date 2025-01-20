@@ -1,9 +1,14 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { SensorsService } from './sensors.service';
-import { ApiFoundResponse, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiExtraModels,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  getSchemaPath,
+} from '@nestjs/swagger';
 import { QueryParamsDto } from 'src/dto/query-params.dto';
-import { CreateSensorDto } from './dto/create-sensor.dto';
-import { SwaggerResponse } from 'src/decorator/swagger-response';
+import { Sensor } from './entities/sensor.entity';
 
 @ApiTags('sensors')
 @Controller('sensors')
@@ -12,7 +17,28 @@ export class SensorsController {
 
   @Get()
   @ApiOperation({ summary: 'Get sensors data history' })
-  @SwaggerResponse(201,'ds',"grgs",[CreateSensorDto])
+  @ApiExtraModels(Sensor)
+  @ApiOkResponse({
+    description: 'OK',
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number', example: 200 },
+        message: { type: 'string', example: 'Success' },
+        data: {
+          type: 'object',
+          properties: {
+            items: {
+              type: 'array',
+              items: { $ref: getSchemaPath(Sensor) },
+            },
+            currentPage: { type: 'number', example: 1 },
+            totalCount: { type: 'number', example: 1 },
+          },
+        },
+      },
+    },
+  })
   async getAllSensorsData(@Query() query: QueryParamsDto) {
     const data = await this.sensorsService.getData(query);
     const totalCount = await this.sensorsService.getTotalCount(query);
@@ -25,6 +51,21 @@ export class SensorsController {
 
   @Get('latest')
   @ApiOperation({ summary: 'Get latest sensors data' })
+  @ApiExtraModels(Sensor)
+  @ApiOkResponse({
+    description: 'OK',
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number', example: 200 },
+        message: { type: 'string', example: 'Success' },
+        data: {
+          type: 'object',
+          $ref: getSchemaPath(Sensor),
+        },
+      },
+    },
+  })
   async getLatest() {
     const data = await this.sensorsService.getLastest();
     return data;

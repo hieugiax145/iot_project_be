@@ -29,10 +29,8 @@ export class DevicesService {
     }
 
     if (keyword) {
-      // Decode the keyword and trim whitespace
       const decodedKeyword = decodeURIComponent(keyword.trim());
 
-      // Log the decoded keyword for debugging
       console.log(`Decoded keyword: ${decodedKeyword}`);
 
       const isDateValid = /^\d{4}-\d{2}-\d{2}$/.test(
@@ -56,7 +54,6 @@ export class DevicesService {
           }
 
           if (isDateValid) {
-            // Check for equality with the decoded date
             qb.orWhere('activity.time = :exactTime', {
               exactTime: `${decodedKeyword}`,
             });
@@ -91,10 +88,8 @@ export class DevicesService {
     }
 
     if (keyword) {
-      // Decode the keyword and trim whitespace
       const decodedKeyword = decodeURIComponent(keyword.trim());
 
-      // Log the decoded keyword for debugging
       console.log(`Decoded keyword: ${decodedKeyword}`);
 
       const isDateValid = /^\d{4}-\d{2}-\d{2}$/.test(
@@ -118,7 +113,6 @@ export class DevicesService {
           }
 
           if (isDateValid) {
-            // Check for equality with the decoded date
             qb.orWhere('activity.time = :exactTime', {
               exactTime: `${decodedKeyword}`,
             });

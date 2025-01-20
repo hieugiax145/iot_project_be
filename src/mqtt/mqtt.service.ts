@@ -1,4 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { MqttClient, connect } from 'mqtt';
 import { Gateway } from 'src/gateway/gateway';
 import { SensorsService } from 'src/modules/sensors/sensors.service';
@@ -10,16 +11,18 @@ export class MqttService implements OnModuleInit {
   constructor(
     private readonly sensorsDataService: SensorsService,
     private readonly socketService: Gateway,
+    private readonly configService: ConfigService,
   ) {}
   onModuleInit() {
     this.connect();
   }
 
   connect() {
-    const mqtt_broker_url = 'mqtt://localhost:1883';
+    const mqtt_broker_url = this.configService.get<string>('MQTT_BROKER_URL');
     this.mqtt = connect(mqtt_broker_url, {
-      username: 'hieugia',
-      password: '123',
+      // port:+this.configService.get<string>('MQTT_PORT'),
+      username: this.configService.get<string>('MQTT_USERNAME'),
+      password: this.configService.get<string>('MQTT_PASSWORD'),
     });
 
     this.mqtt.on('connect', () => {

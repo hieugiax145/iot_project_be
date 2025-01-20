@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   BeforeInsert,
   Column,
@@ -8,15 +9,25 @@ import {
 
 @Entity('activity')
 export class Device {
+  @ApiProperty({
+    example: 1,
+  })
   @PrimaryGeneratedColumn()
   id: number;
 
+  @ApiProperty({
+    example: 'led1',
+  })
   @Column()
   device: string;
 
+  @ApiProperty({
+    example: 1,
+  })
   @Column('int')
   action: number;
 
+  @ApiProperty()
   @CreateDateColumn({ type: 'timestamp' })
   time: Date;
 

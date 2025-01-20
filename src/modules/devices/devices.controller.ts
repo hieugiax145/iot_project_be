@@ -1,9 +1,18 @@
 import { Controller, Get, Post, Body, Query } from '@nestjs/common';
 import { DevicesService } from './devices.service';
-import { CreateDeviceDto, CreateDeviceDtoResponse } from './dto/create-device.dto';
-import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateDeviceDto } from './dto/create-device.dto';
+import {
+  ApiCreatedResponse,
+  ApiExtraModels,
+  ApiOkResponse,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+  getSchemaPath,
+} from '@nestjs/swagger';
 import { MqttService } from 'src/mqtt/mqtt.service';
 import { QueryParamsDto } from 'src/dto/query-params.dto';
+import { Device } from './entities/device.entity';
 
 @ApiTags('devices activity')
 @Controller('devices')
@@ -14,8 +23,29 @@ export class DevicesController {
   ) {}
 
   @Get()
-  @ApiOperation({summary:'Get devices activity'})
-  @ApiResponse({type:CreateDeviceDtoResponse<CreateDeviceDto>})
+  @ApiOperation({ summary: 'Get devices activity' })
+  @ApiExtraModels(Device)
+  @ApiOkResponse({
+    description: 'OK',
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number', example: 200 },
+        message: { type: 'string', example: 'Success' },
+        data: {
+          type: 'object',
+          properties: {
+            items: {
+              type: 'array',
+              items: { $ref: getSchemaPath(Device) },
+            },
+            currentPage: { type: 'number', example: 1 },
+            totalCount: { type: 'number', example: 1 },
+          },
+        },
+      },
+    },
+  })
   async getData(@Query() query: QueryParamsDto) {
     const data = await this.devicesService.getData(query);
     const totalCount = await this.devicesService.getTotalCount(query);
@@ -27,7 +57,22 @@ export class DevicesController {
   }
 
   @Get('/latest')
-  @ApiOperation({summary:'Get latest device activity'})
+  @ApiOperation({ summary: 'Get latest device activity' })
+  @ApiExtraModels(Device)
+  @ApiOkResponse({
+    description: 'OK',
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number', example: 200 },
+        message: { type: 'string', example: 'Success' },
+        data: {
+          type: 'object',
+          $ref: getSchemaPath(Device),
+        },
+      },
+    },
+  })
   @ApiQuery({
     name: 'device',
     type: String,
@@ -38,13 +83,19 @@ export class DevicesController {
   }
 
   @Post()
-  @ApiOperation({summary:'Change devices status'})
-  @ApiBody({
-    description: 'Add new action to control LED',
-    type: CreateDeviceDto,
-    examples: {
-      example: {
-        value: { device: 'led1', action: 1 },
+  @ApiOperation({ summary: 'Change devices status' })
+  @ApiExtraModels(Device)
+  @ApiCreatedResponse({
+    description: 'OK',
+    schema: {
+      type: 'object',
+      properties: {
+        statusCode: { type: 'number', example: 201 },
+        message: { type: 'string', example: 'Success' },
+        data: {
+          type: 'object',
+          $ref: getSchemaPath(Device),
+        },
       },
     },
   })
